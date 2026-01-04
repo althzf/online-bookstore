@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash
 
 name = "Admin"
 email = "admin@store.com"
-password = "admin123"   # you can change this
+password = "admin123"   
 
 conn = sqlite3.connect("bookstore.db")
 cursor = conn.cursor()
