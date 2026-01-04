@@ -10,7 +10,7 @@ def get_db():
     return sqlite3.connect("bookstore.db")
 
 
-# ---------- HOME ----------
+
 @app.route("/")
 def index():
     db = get_db()
@@ -19,7 +19,7 @@ def index():
     return render_template("index.html", books=books)
 
 
-# ---------- SEARCH ----------
+
 @app.route("/search")
 def search():
     q = request.args.get("q", "")
@@ -32,7 +32,7 @@ def search():
     return render_template("index.html", books=books, q=q)
 
 
-# ---------- REGISTER ----------
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -54,7 +54,7 @@ def register():
     return render_template("register.html")
 
 
-# ---------- LOGIN ----------
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -81,14 +81,14 @@ def login():
     return render_template("login.html")
 
 
-# ---------- LOGOUT ----------
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
 
-# ---------- CART ----------
+
 @app.route("/add_to_cart/<int:book_id>")
 def add_to_cart(book_id):
     cart = session.get("cart", {})
@@ -114,7 +114,6 @@ def cart():
     return render_template("cart.html", items=items, total=total)
 
 
-# ---------- CART: REMOVE ONE ----------
 @app.route("/cart/remove/<int:book_id>")
 def remove_one(book_id):
     cart = session.get("cart", {})
@@ -129,7 +128,7 @@ def remove_one(book_id):
     return redirect("/cart")
 
 
-# ---------- CART: DELETE ITEM ----------
+
 @app.route("/cart/delete/<int:book_id>")
 def delete_item(book_id):
     cart = session.get("cart", {})
@@ -138,7 +137,7 @@ def delete_item(book_id):
     return redirect("/cart")
 
 
-# ---------- CHECKOUT ----------
+
 @app.route("/checkout", methods=["POST"])
 def checkout():
     name = request.form["name"]
@@ -147,11 +146,11 @@ def checkout():
 
     db = get_db()
 
-    # reuse logged-in user if available
+    
     user_id = session.get("user_id")
 
     if not user_id:
-        # check if email already exists
+        
         existing = db.execute(
             "SELECT id FROM users WHERE email=?",
             (email,)
@@ -160,14 +159,14 @@ def checkout():
         if existing:
             user_id = existing[0]
         else:
-            # create guest user
+            
             db.execute(
                 "INSERT INTO users(name, email, password, role) VALUES (?,?,?, 'user')",
                 (name, email, generate_password_hash("temp")),
             )
             user_id = db.execute("SELECT last_insert_rowid()").fetchone()[0]
 
-    # calculate total
+    
     total = 0
     for book_id, qty in cart.items():
         price = db.execute(
@@ -175,11 +174,11 @@ def checkout():
         ).fetchone()[0]
         total += price * qty
 
-    # create order
+    
     db.execute("INSERT INTO orders(user_id, total) VALUES (?, ?)", (user_id, total))
     order_id = db.execute("SELECT last_insert_rowid()").fetchone()[0]
 
-    # order items + reduce stock
+    
     for book_id, qty in cart.items():
         db.execute(
             "INSERT INTO order_items(order_id, book_id, quantity) VALUES (?,?,?)",
@@ -194,7 +193,7 @@ def checkout():
     return render_template("success.html")
 
 
-# ---------- ADMIN ----------
+
 @app.route("/admin")
 def admin_home():
     if session.get("role") != "admin":
@@ -228,7 +227,7 @@ def add_book():
     return render_template("add_book.html")
 
 
-# ---------- ADMIN: VIEW ORDERS WITH BOOKS ----------
+
 @app.route("/admin/orders")
 def admin_orders():
     if session.get("role") != "admin":
@@ -236,7 +235,7 @@ def admin_orders():
 
     db = get_db()
 
-    # get all orders with user info
+ 
     orders = db.execute("""
         SELECT orders.id, users.name, users.email, orders.total, orders.created_at
         FROM orders
@@ -244,7 +243,7 @@ def admin_orders():
         ORDER BY orders.id DESC
     """).fetchall()
 
-    # fetch items for each order
+   
     order_details = {}
 
     for o in orders:
