@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Online Bookstore</h2>
+
+{% if session.name %}
+  Welcome, {{ session.name }} |
+  <a href="/logout">Logout</a>
+  {% if session.role == 'admin' %} | <a href="/admin">Admin</a>{% endif %}
+{% else %}
+  <a href="/login">Login</a> | <a href="/register">Register</a>
+{% endif %}
+
+<form action="/search">
+  <input name="q" placeholder="Search books...">
+</form>
+
+<ul>
+  {% for b in books %}
+  <li>
+    <strong>{{ b[1] }}</strong> — {{ b[2] }} — ${{ b[3] }}
+    <a href="/add_to_cart/{{ b[0] }}">Add to cart</a>
+  </li>
+  {% endfor %}
+</ul>
+
+<a href="/cart">View Cart</a>
+</body>
+</html>

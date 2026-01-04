@@ -1,0 +1,11 @@
+<h2>Admin Dashboard</h2>
+
+<a href="/admin/add">Add Book</a> |
+<a href="/admin/orders">View Orders</a> |
+<a href="/logout">Logout</a>
+
+<ul>
+  {% for b in books %}
+  <li>{{ b[1] }} — {{ b[2] }} — ₹{{ b[3] }}</li>
+  {% endfor %}
+</ul>

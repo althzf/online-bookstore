@@ -1,0 +1,32 @@
+<h2>Your Cart</h2>
+
+{% if items %}
+<ul>
+  {% for book, qty in items %}
+    <li>
+      <strong>{{ book[1] }}</strong> — ₹{{ book[3] }} each  
+      (x{{ qty }}) = ₹{{ "%.2f" | format(book[3] * qty) }}
+
+      &nbsp; | &nbsp;
+      <!-- remove ONE -->
+      <a href="/cart/remove/{{ book[0] }}">[-]</a>
+
+      <!-- remove ALL -->
+      <a href="/cart/delete/{{ book[0] }}">Remove</a>
+    </li>
+  {% endfor %}
+</ul>
+
+<p><strong>Total:</strong> ₹{{ "%.2f" | format(total) }}</p>
+
+<form method="POST" action="/checkout">
+  <input name="name" placeholder="Your name" required>
+  <input name="email" placeholder="Email" required>
+  <button type="submit">Checkout</button>
+</form>
+
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+
+<a href="/">Continue shopping</a>
